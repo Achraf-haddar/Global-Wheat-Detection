@@ -1,5 +1,9 @@
-DIR_INPUT = "Dataset"
-DIR_TRAIN = f"{Dataset}/train"
-DIR_TEST = f"{Dataset}/test"
+DIR_INPUT = "../Dataset"
+DIR_TRAIN = f"{DIR_INPUT}/train"
+DIR_TEST = f"{DIR_INPUT}/test"
+TRAIN_BS = 16
+VALID_BS = 8
 IMAGE_WIDTH = 1024
 IMAGE_HEIGHT = 1024
+NUM_WORKERS = 4
+EPOCHS = 2

@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 class WheatDataset(Dataset):
     def __init__(self, dataframe, image_dir):
         super().__init__()
-        self.image_ids = dataframe["image_ids"].unique()
+        self.image_ids = dataframe["image_id"].unique()
         self.image_dir = image_dir
         self.df = dataframe
 
@@ -39,6 +39,17 @@ class WheatDataset(Dataset):
         target['image_id'] = torch.tensor([item])
         target['area'] = area
         target['iscrowd'] = iscrowd
+
+        if self.transforms:
+            sample = {
+                'image': image,
+                'bboxes': target['boxes'],
+                'labels': labels
+            }
+            sample = self.transforms(**sample)
+            image = sample['image']
+            
+            target['boxes'] = torch.stack(tuple(map(torch.tensor, zip(*sample['bboxes'])))).permute(1, 0)
   
         return image, target, image_id
 
