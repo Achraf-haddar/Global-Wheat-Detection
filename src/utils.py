@@ -1,4 +1,4 @@
-import albumentations
+import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 
 
@@ -23,14 +23,17 @@ class Averager:
         self.iterations = 0.0
 
 
+def collate_fn(batch):
+    return tuple(zip(*batch))
+
 # Albumentations
 def get_train_transform():
-    return albumentations.Compose([
-        albumentations.Flip(0.5),
+    return A.Compose([
+        A.Flip(0.5),
         ToTensorV2(p=1.0)
     ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
 
 def get_valid_transform():
-    return albumentations.Compose([
+    return A.Compose([
         ToTensorV2(p=1.0)
     ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})

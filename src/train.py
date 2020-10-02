@@ -5,6 +5,7 @@ import re
 
 import config
 from utils import Averager
+from utils import collate_fn
 from utils import get_train_transform
 from utils import get_valid_transform
 from model import obtain_model
@@ -13,17 +14,17 @@ from dataset import WheatDataset
 
 def run(train_path):
     df = pd.read_csv(train_path)
-    print(df.shape)
+    print(df.shape)    
     df['x'] = df['bbox'].apply(lambda x: float(np.array(re.findall("([0-9]+[.]?[0-9]*)", x))[0]))
     df['y'] = df['bbox'].apply(lambda x: float(np.array(re.findall("([0-9]+[.]?[0-9]*)", x))[1]))
     df['w'] = df['bbox'].apply(lambda x: float(np.array(re.findall("([0-9]+[.]?[0-9]*)", x))[2]))
     df['h'] = df['bbox'].apply(lambda x: float(np.array(re.findall("([0-9]+[.]?[0-9]*)", x))[3]))
     df.drop(['bbox'], inplace=True, axis=1)
-
+    
     # split the data 
     image_ids = df['image_id'].unique()
     valid_ids = image_ids[-665:]
-    train_ids = image_ids[-665:]
+    train_ids = image_ids[:-665]
     train_df = df[df['image_id'].isin(train_ids)]
     valid_df = df[df['image_id'].isin(valid_ids)]
     
@@ -34,13 +35,15 @@ def run(train_path):
         train_dataset,
         batch_size=config.TRAIN_BS,
         shuffle=False,
-        num_workers=config.NUM_WORKERS
+        num_workers=config.NUM_WORKERS,
+        collate_fn=collate_fn
     )
     valid_data_loader = torch.utils.data.DataLoader(
         valid_dataset,
         batch_size=config.VALID_BS,
         shuffle=False,
-        num_workers=config.NUM_WORKERS
+        num_workers=config.NUM_WORKERS,
+        collate_fn=collate_fn
     )
     # Device used is cuda
     device = torch.device('cuda')
@@ -55,8 +58,7 @@ def run(train_path):
     itr = 1
 
     for epoch in range(config.EPOCHS):
-        loss_hist.reset()
-
+        loss_hist.reset()    
         for images, targets, image_ids in train_data_loader:
             images = list(image.to(device) for image in images)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
