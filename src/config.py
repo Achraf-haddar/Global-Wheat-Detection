@@ -1,8 +1,12 @@
 DIR_INPUT = "../Dataset"
 DIR_TRAIN = f"{DIR_INPUT}/train"
 DIR_TEST = f"{DIR_INPUT}/test"
+DIR_WEIGHTS = '../weights'
+WEIGHTS_FILE = f'{DIR_WEIGHTS}/fasterrcnn_resnet50_fpn_best.pth'
+INFERENCE_RESULT = "../output"
 TRAIN_BS = 4
 VALID_BS = 2
+TEST_BS = 2
 IMAGE_WIDTH = 1024
 IMAGE_HEIGHT = 1024
 NUM_WORKERS = 4

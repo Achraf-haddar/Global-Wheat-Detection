@@ -9,7 +9,9 @@ from utils import collate_fn
 from utils import get_train_transform
 from utils import get_valid_transform
 from model import obtain_model
-from dataset import WheatDataset
+from dataset import WheatDatasetTrain
+from dataset import WheatDatasetTest
+
 
 
 def run(train_path):
@@ -28,8 +30,8 @@ def run(train_path):
     train_df = df[df['image_id'].isin(train_ids)]
     valid_df = df[df['image_id'].isin(valid_ids)]
     
-    train_dataset = WheatDataset(train_df, config.DIR_TRAIN, get_train_transform())
-    valid_dataset = WheatDataset(valid_df, config.DIR_TRAIN, get_valid_transform())
+    train_dataset = WheatDatasetTrain(train_df, config.DIR_TRAIN, get_train_transform())
+    valid_dataset = WheatDatasetTrain(valid_df, config.DIR_TRAIN, get_valid_transform())
 
     train_data_loader = torch.utils.data.DataLoader(
         train_dataset,

@@ -26,6 +26,13 @@ class Averager:
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+def format_prediction_string(boxes, scores):
+    pred_strings = []
+    for j in zip(scores, boxes):
+        pred_strings.append("{0:.4f} {1} {2} {3} {4}".format(j[0], j[1][0], j[1][1], j[1][2], j[1][3]))
+
+    return " ".join(pred_strings)
+
 # Albumentations
 def get_train_transform():
     return A.Compose([
@@ -37,3 +44,10 @@ def get_valid_transform():
     return A.Compose([
         ToTensorV2(p=1.0)
     ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+
+# Albumentations
+def get_test_transform():
+    return A.Compose([
+        # A.Resize(512, 512),
+        ToTensorV2(p=1.0)
+    ])
